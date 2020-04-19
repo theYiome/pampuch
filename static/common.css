@@ -1,0 +1,47 @@
+:root {
+    --primary-light: #439889;
+    --primary-normal: #00695c;
+    --primary-dark: #003d33;
+
+    --secondary-light: #fa5788;
+    --secondary-normal: #c2185b;
+    --secondary-dark: #8c0032;
+}
+
+body {
+    font-family: 'Baloo Paaji 2', cursive;
+}
+
+.block {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    margin: 16px;
+    padding: 12px;
+}
+
+.title {
+    background-color: var(--primary-dark);
+    color: white;
+    font-size: 48px;
+    padding: 0px 12px !important;
+}
+
+
+.imgCanvas{
+    background-color: var(--secondary-dark);
+}
+
+.mainPanel {
+    margin: auto;
+    background-color: var(--primary-normal);
+    max-width: 1000px;
+    padding: 32px;
+}
+
+.controls {
+    background-color: var(--primary-light);
+}
+
+input, button {
+    font-family: inherit;
+    color: inherit;
+}
