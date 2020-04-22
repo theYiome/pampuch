@@ -1,4 +1,6 @@
 import flask
+import json
+import server_utils as utils
 
 app = flask.Flask(__name__, static_url_path="/")
 
@@ -23,6 +25,12 @@ def return_image(img_id):
     return "Returning image with id: {}".format(img_id)
 
 
-@app.route("/api/save")
+@app.route("/api/save", methods=['POST'])
 def save_image():
-    return "Save image with its label in database"
+    data = flask.request.json
+    bin_image = utils.base64_str_to_bytearray(data["image"])
+
+    with open("data_sent_by_post.png", "wb") as f:
+        f.write(bin_image)
+    
+    return "Save image with its label in database\n" + json.dumps(data, indent=4)
