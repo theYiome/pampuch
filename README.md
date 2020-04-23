@@ -13,4 +13,4 @@ you can find mockup of the front-end part as interactive PDF file or preffered .
 
 # Front-end part of application is now on Github Pages!
 You can take a look at the current state of out front-end:
-https://theyiome.github.io/pampuch/menu.html
+https://theyiome.github.io/pampuch/static/menu.html
