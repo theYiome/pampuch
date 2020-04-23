@@ -11,6 +11,6 @@ We might implement automatic segmentation as well, and this means that picture s
 In this repository under /doc/ directory
 you can find mockup of the front-end part as interactive PDF file or preffered .bmpr (Balsamiq Wireframes 4 file).
 
-# Front end part of application is now on Github Pages!
-You can take a look at the current state of out Front End:
+# Front-end part of application is now on Github Pages!
+You can take a look at the current state of out front-end:
 https://theyiome.github.io/pampuch/menu.html
