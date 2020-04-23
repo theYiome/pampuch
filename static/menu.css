@@ -1,0 +1,37 @@
+.buttonBox {
+    background-color: var(--primary-dark);
+    display: flex;
+    flex: 1;
+    align-items: center;
+    flex-direction: column;
+
+    padding: 32px;
+    border-radius: 4px;
+    max-width: 1024px;
+}
+
+.buttonLink {
+    background-color: var(--primary-normal);
+    color: white;
+    display: flex;
+    width: 512px;
+
+    justify-content: center;
+    font-size: 48px;
+    border-radius: 4px;
+}
+
+.buttonLink:hover {
+    background-color: var(--primary-light);
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 98vh;
+}
+
+body {
+    background-color: var(--primary-light);
+}

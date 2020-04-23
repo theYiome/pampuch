@@ -34,3 +34,23 @@ def save_image():
         f.write(bin_image)
     
     return "Save image with its label in database\n" + json.dumps(data, indent=4)
+
+
+@app.route("/api/recognize", methods=['POST'])
+def recognize_image():
+    data = flask.request.json
+    bin_image = utils.base64_str_to_bytearray(data["image"])
+
+    output = {
+        "guesses": [
+            {
+                "label": "cat",
+                "percentage": 63
+            },
+            {
+                "label": "cucumber",
+                "percentage": 23
+            }
+        ]
+    }
+    return json.dumps(output, indent=4)

@@ -1,0 +1,26 @@
+.title {
+    background-color: var(--primary-dark);
+    color: white;
+    font-size: 48px;
+    padding: 0px 12px !important;
+}
+
+.imgCanvas{
+    background-color: var(--secondary-dark);
+}
+
+.mainPanel {
+    margin: auto;
+    background-color: var(--primary-normal);
+    max-width: 1000px;
+    padding: 32px;
+}
+
+.controls {
+    background-color: var(--primary-light);
+}
+
+input, button {
+    font-family: inherit;
+    color: inherit;
+}
