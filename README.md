@@ -58,22 +58,37 @@ Stuff that our app should be able to do:
 ### Sprint 01 - End 2020.04.30 - DONE
 - Basic HTML5 and CSS UI template
 - Definition of some basic endpoints
+- Backend that is able to get a request and send any response
 - Basic frontend-backend communication (file transfer in json requests)
 
 ### Sprint 02 - End 2020.05.07
-- TODO
+- Working Catalog site on frontend
+- Retriving images from database to fufill catalog requirements form frontend
+- Datasate is prepared
 
 ### Sprint 03 - End 2020.05.14
-- TODO
+- Working Categorization site on frontend
+- Backend is able to save labeled image to dataset
+- Basing work on ML model creation
+- Determining correct format of our files
 
 ### Sprint 04 - End 2020.05.21
-- TODO
+- Working Recognition site on frontend
+- ML model is discussed by the team (knowleage sharing)
+- Backend endpoints mocked
 
 ### Sprint 05 - End 2020.05.28
-- TODO
+- Fully functional frontend
+- Basic model working
+- Backend sending request ML part
 
 ### Sprint 06 - End 2020.06.04
-- TODO
+- Frontend polishing after team discussion
+- Whole system integration discussed (knowleage sharing)
+- Functional ML model
+- Dockerization
 
 ### Sprint 07 - End 2020.06.11
-- TODO
+- Fully working app
+- All functionalities tested manualy
+- Hosting out app online
