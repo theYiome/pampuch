@@ -62,8 +62,9 @@ Stuff that our app should be able to do:
 - Basic frontend-backend communication (file transfer in json requests)
 
 ### Sprint 02 - End 2020.05.07
+- Endpoint for retriving all available labels in database
+- Endpoint for retriving images with choosen label from database
 - Working Catalog site on frontend
-- Retriving images from database to fufill catalog requirements form frontend
 - Datasate is prepared
 
 ### Sprint 03 - End 2020.05.14
