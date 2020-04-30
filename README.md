@@ -69,18 +69,18 @@ Stuff that our app should be able to do:
 ### Sprint 03 - End 2020.05.14
 - Working Categorization site on frontend
 - Backend is able to save labeled image to dataset
+- Determining correct format of our images
 - Basing work on ML model creation
-- Determining correct format of our files
 
 ### Sprint 04 - End 2020.05.21
 - Working Recognition site on frontend
 - ML model is discussed by the team (knowleage sharing)
-- Backend endpoints mocked
+- Backend endpoint for recognition mocked
 
 ### Sprint 05 - End 2020.05.28
 - Fully functional frontend
 - Basic model working
-- Backend sending request ML part
+- Backend sending request to ML part
 
 ### Sprint 06 - End 2020.06.04
 - Frontend polishing after team discussion
