@@ -17,6 +17,7 @@
 body {
     font-family: 'Baloo Paaji 2', cursive;
     min-height: 98vh;
+    background-color: var(--primary-light);
 }
 
 .block {
@@ -28,4 +29,11 @@ body {
 a {
     text-decoration: inherit;
     color: inherit;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 98vh;
 }
