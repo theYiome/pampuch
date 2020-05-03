@@ -29,6 +29,26 @@ Stuff we are going to use:
 	- Flask (python micro framework for web applications)
 	- sqlite3 (light database for web application and out dataset)
 	- NumPy (computing liblary)
+	
+- Machine Learning
+    - tensorFlow 
+    - Keras 
+    - numpy 
+    - skimage
+
+## Machine Learning
+- Dataset:
+    - [keras.datasets](https://keras.io/datasets/) To begin we will be using datasets provided with Keras Library cause 
+    of their easy of use for people like us not knowledgeable in the ML field
+        -  CIFAR10 - initially fulfills all of our requirements.
+        -  CIFAR100 - is bigger version of CIFAR10
+    - If there will be such requirement we would experiment with much bigger datasets. 
+- Method
+    - CNN - Convolutional Neural Network
+        - We will start with CNN cause the internet says that it's good with image recognition and classification. 
+        Two areas that we interested in. 
+    - If time will allow we would like to experiment with other neural networks.
+    
 
 ## Functionalities
 
