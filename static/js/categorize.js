@@ -23,7 +23,8 @@ function updateImage(event) {
     const url = URL.createObjectURL(imageFile);
     const img = new Image();
     img.onload = function() {
-        ctx.drawImage(img, 20, 20);    
+        ctx.drawImage(img, 0, 0, img.width,    img.height,     // source rectangle
+                   0, 0, canvas.width, canvas.height);
     }
     img.src = url;
 
