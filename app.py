@@ -4,29 +4,17 @@ from PIL import Image
 import io
 import server_utils as utils
 
-app = flask.Flask(__name__, static_folder='static')
+app = flask.Flask(__name__, static_url_path="/")
 
 
 @app.route("/")
 def redirect_to_menu():
-    return flask.render_template("menu.html")
+    return flask.redirect("menu.html")
 
 
-@app.route("/catalog")
-def redirect_to_catalog():
-    return flask.render_template("catalog.html")
-
-@app.route("/categorize")
-def redirect_to_categorize():
-    return flask.render_template("categorize.html")
-
-@app.route("/recognize")
-def redirect_to_recognize():
-    return flask.render_template("recognize.html")
-
-@app.route("/apidoc")
+@app.route("/api")
 def redirect_to_apidoc():
-    return flask.render_template("apidoc.html")
+    return flask.redirect("apidoc.html")
 
 
 @app.route("/api/images")
@@ -52,16 +40,12 @@ def save_image():
     for rect in data["rects"]:
         label = rect["label"]
         left = int(rect["x"])
-        bottom = int(rect["y"])+int(rect["h"])
+        bottom = int(rect["y"]) + int(rect["h"])
         right = int(rect["x"]) + int(rect["w"])
         top = int(rect["y"])
         labeled_image = image.crop((left, top, right, bottom))
         labeled_image = labeled_image.resize((32, 32))
         utils.sql_insert_image(connection, labeled_image, label)
-
-
-
-    
     return "Save image with its label in database\n" + json.dumps(data, indent=4)
 
 
@@ -83,6 +67,7 @@ def recognize_image():
         ]
     }
     return json.dumps(output, indent=4)
+
 
 if __name__ == "__main__":
     connection = utils.sql_connection()

@@ -51,6 +51,9 @@ def sql_get_images(connection, img_id = -1):
         element = collections.OrderedDict()
         element['id'] = row[0]
         element['label'] = row[1]
-        element['path'] = row[2]
+        with open(str(row[2]), "rb") as image_file:
+            base64_str = str(base64.b64encode(image_file.read()))[2:]
+            n = base64_str.__len__()
+            element['base64'] = base64_str[:n-1]
         objects_list.append(element)
     return json.dumps(objects_list, indent=4)
