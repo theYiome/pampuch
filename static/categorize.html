@@ -21,9 +21,17 @@
         <div class="flex-center">
             <div class="mainPanel block">        
                 <div class="title block">Categorize</div>
-                <canvas width="400" height="300" id="imgCanvas" class="imgCanvas block">HTML5 canvas is required</canvas>
+                <canvas width="900" height="300" id="imgCanvas" class="imgCanvas block">HTML5 canvas is required</canvas>
                 <div class="controls block">
-                    <input type="file" id="imageUpload" accept="image/*">
+                    <div class="buttons block">
+                        <input class="control-button" type="file" id="imageUpload" accept="image/*"/>
+                        <label for="imageUpload" class="block">Choose a file</label>
+                        
+                        <button id="send-button" class="control-button"></button>
+                        <label for="send-button" class="block">Save file with labels on the server</label>
+                    </div>
+                    <div class="inputs block">
+                    </div>
                 </div>
                 <a href="menu.html"><div class="title block">Back to Menu</div></a>
             <div>

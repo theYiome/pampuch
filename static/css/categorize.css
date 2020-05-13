@@ -3,10 +3,13 @@
     color: white;
     font-size: 48px;
     padding: 0px 12px !important;
+    text-shadow: 3px 3px #000000;
 }
 
 .imgCanvas{
     background-color: var(--secondary-dark);
+    margin: auto;
+    padding: 0 !important;
 }
 
 .mainPanel {
@@ -21,9 +24,50 @@
 
 .controls {
     background-color: var(--primary-light);
+    display: flex;
+    flex-direction: row;
+}
+
+.buttons {
+    background-color: var(--primary-dark);
+    flex: 1;
+}
+
+.inputs {
+    background-color: var(--secondary-normal);
+    color: white;
+    flex: 2;
 }
 
 input, button {
     font-family: inherit;
     color: inherit;
+}
+
+.control-button {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+    z-index: -1;
+}
+
+.control-button + label {
+    font-size: 1.25em;
+    font-weight: 700;
+    color: white;
+    background-color: var(--secondary-dark);
+    display: flex;
+    flex: 1;
+    user-select: none;
+    text-shadow: 3px 3px #000000;
+}
+
+.control-button:focus + label,
+.control-button + label:hover {
+    outline: 1px dotted #000;
+    outline: -webkit-focus-ring-color auto 5px;
+    background-color: var(--secondary-normal);
+    cursor: pointer;
 }

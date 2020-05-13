@@ -3,15 +3,14 @@
     --primary-normal: #00695c;
     --primary-dark: #003d33;
 
-    --secondary-light: #fa5788;
-    --secondary-normal: #c2185b;
-    --secondary-dark: #8c0032;
+    --secondary-light: #ac173c;
+    --secondary-normal: #750d11;
+    --secondary-dark: #570922;
 }
 
 * {
     transition: all;
     transition-duration: 0.2s;
-    text-shadow: 3px 3px #000000;
 }
 
 body {

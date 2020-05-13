@@ -1,13 +1,63 @@
 const pageData = {
-    image: undefined,
-    imageType: undefined,
-    rects: undefined
-}
+    image: null,
+    imageType: null,
+    rects: null
+};
+
+let imgSize = {
+    k: null,
+    w: null,
+    h: null
+};
+
+let img = null;
 
 window.onload = function() {
-    const input = document.getElementById('imageUpload');
-    input.addEventListener('change', updateImage, false);
-}
+    $("#imageUpload").change(updateImage);
+    $("#send-button").click(function() {
+        if(pageData.image === null) {
+            alert("You need to load image and categorize it first!");
+            return;
+        } else if(pageData.rects === null || pageData.rects.length) {
+            alert("Please pick and label some images!");
+            return;
+        } else {
+            $.ajax({
+                url: "/api/save",
+                type: "POST",
+                data: JSON.stringify(pageData),
+                contentType: "application/json",
+                dataType: "json",
+                success: function(data) {
+                    console.log(data);
+                }
+            });
+        }
+    });
+
+    $("#imgCanvas").mouseup(function(evt) {
+        let offset = $(this).offset();
+        let cords = {
+            x: evt.pageX - offset.left,
+            y: evt.pageY - offset.top,
+        };
+        console.log(cords);
+    }).mousedown(function(evt) {
+        let offset = $(this).offset();
+        let cords = {
+            x: evt.pageX - offset.left,
+            y: evt.pageY - offset.top,
+        };
+        console.log(cords);
+    }).mousemove(function(evt) {
+        let offset = $(this).offset();
+        let cords = {
+            x: evt.pageX - offset.left,
+            y: evt.pageY - offset.top,
+        };
+        console.log(cords);
+    });
+};
 
 function updateImage(event) {
     const canvas = document.getElementById('imgCanvas');
@@ -21,46 +71,25 @@ function updateImage(event) {
     pageData.imageType = imageFile.type;
 
     const url = URL.createObjectURL(imageFile);
-    const img = new Image();
+    img = new Image();
     img.onload = function() {
-        ctx.drawImage(img, 20, 20);    
-    }
+        imgSize.w = this.width;
+        imgSize.h = this.height;
+        imgSize.k = 900 / imgSize.w;
+        console.log(imgSize);
+        const cnv = $("#imgCanvas");
+        cnv.width(imgSize.w);
+        cnv.height(imgSize.h);
+
+        ctx.drawImage(img, 0, 0, imgSize.w, imgSize.h, 0, 0, canvas.width, canvas.height);
+    };
     img.src = url;
 
     const fileReader = new FileReader();
     fileReader.onload = function(e) {
         const data = new Uint8Array(e.target.result);
         pageData.image = base64encode(data);
-
-        pageData.rects = [
-            {
-                label: "cat",
-                x: 50,
-                y: 32,
-                w: 109,
-                h: 123
-            },
-            {
-                label: "cucumber",
-                x: 321,
-                y: 54,
-                w: 768,
-                h: 232
-            },
-        ];
-
-        onPostSuccess = function(data) {
-            console.log(data);
-        }
-
-        $.ajax({
-            url: "/api/save",
-            type: "POST",
-            data: JSON.stringify(pageData),
-            contentType: "application/json",
-            dataType: "json",
-            success: onPostSuccess
-        });
     };
     fileReader.readAsArrayBuffer(imageFile);
 }
+
