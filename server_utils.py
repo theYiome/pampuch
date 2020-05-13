@@ -1,8 +1,14 @@
 import base64
-import sqlite3
-from sqlite3 import Error
 import json
 import collections
+import io
+from PIL import Image
+from sqlalchemy import create_engine, func
+from sqlalchemy import Table, Column, Integer, String, LargeBinary, MetaData
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+Base = declarative_base()
 
 def base64_str_to_bytearray(data) -> bytearray:
     decoded_data = base64.b64decode(data)
@@ -10,47 +16,73 @@ def base64_str_to_bytearray(data) -> bytearray:
     data_as_int_list = [int(x) for x in data_as_str_list]
     return bytearray(data_as_int_list)
 
-def sql_connection():
-    connection = None
-    try:
-        connection = sqlite3.connect('db/images.db')
-    except Error:
-        print(Error)
 
-    return connection
+class SQL_driver:
+    engine = create_engine('sqlite:///db/pampuch.db')
+    metadata = MetaData(engine)
+    images = None
+    def create_tables(self):
+        self.images = Table('images', self.metadata,
+                       Column('id', Integer, primary_key=True),
+                       Column('label', String),
+                       Column('img', LargeBinary))
+        try:
+            self.images.create()
+        except Exception as e:
+            print(e)
 
-def sql_create_table(connection):
-    cursorObj = connection.cursor()
-    cursorObj.execute("CREATE TABLE if not exists images(id integer PRIMARY KEY, label text, path test)")
-    connection.commit()
+    def insert_image(self, image_bytes, image_label):
+        # self.create_session()
+        insert = self.images.insert()
+        insert.execute(img=image_bytes, label=image_label)
 
-def sql_insert_image(connection, labeled_image, label):
-    cursor = connection.cursor()
-    cursor.execute("SELECT max(id) FROM images")
-    max_id = cursor.fetchall()
-    id = 0
-    if max_id[0][0] != None:
-        id = int(max_id[0][0]) + 1
+    def select_images(self, img_id=-1, img_label=''):
+        select = None
+        if img_id == -1 and img_label == '':
+            select = self.images.select()
+        elif img_label == '':
+            select = self.images.select().where(self.images.columns.id == img_id)
+        elif img_id == -1:
+            select = self.images.select().where(self.images.columns.label == img_label)
 
-    path = ''.join(["db/", str(id), ".png"])
-    labeled_image.save(path)
+        if select is None:
+            return
 
-    insert = ''.join(["INSERT INTO images VALUES (", str(id), ",\"", label, "\",\"", path, "\")"])
-    cursor.execute(insert)
-    connection.commit()
+        results = select.execute()
+        results = results.fetchall()
+        objects_list = []
+        for row in results:
+            element = collections.OrderedDict()
+            element['id'] = row['id']
+            element['label'] = row['label']
 
-def sql_get_images(connection, img_id = -1):
-    cursor = connection.cursor()
-    if img_id == -1:
-        cursor.execute("SELECT * FROM images")
-    else:
-        cursor.execute("SELECT * FROM images WHERE id="+img_id)
-    rows = cursor.fetchall()
-    objects_list = []
-    for row in rows:
-        element = collections.OrderedDict()
-        element['id'] = row[0]
-        element['label'] = row[1]
-        element['path'] = row[2]
-        objects_list.append(element)
-    return json.dumps(objects_list, indent=4)
+            buffered = io.BytesIO(row['img'])
+            img = Image.open(buffered)
+            img.save(buffered, format="PNG")
+            element['base64'] = "".join( chr(x) for x in bytearray(base64.b64encode(buffered.getvalue())) )
+            objects_list.append(element)
+        return json.dumps(objects_list, indent=4)
+
+    def select_labels(self):
+        Session = sessionmaker(bind=self.engine)
+        session = Session()
+        results = session.query(Images.label, func.count(Images.id)).group_by(Images.label).all()
+
+        objects_list = []
+        for row in results:
+            element = collections.OrderedDict()
+            element['label'] = row[0]
+            element['count'] = row[1]
+            objects_list.append(element)
+        return json.dumps(objects_list, indent=4)
+
+
+class Images(Base):
+     __tablename__ = 'images'
+     id = Column(Integer, primary_key=True)
+     label = Column(String)
+     img = Column(LargeBinary)
+     def __init__(self, id, label, img):
+             self.id = id
+             self.label = label
+             self.img = img
