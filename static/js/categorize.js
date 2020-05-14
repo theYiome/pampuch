@@ -23,12 +23,20 @@ function renderInputs() {
     const inputs = $(".inputs");
     inputs.children().remove();
     boxArray.forEach(function(item, index) {
-        const str = '<div class="entry"><div class="field block" style="background-color: {{color}}"></div><input class="field block input-label" type="text" placeholder="label" id="{{id}}"/><button class="field block" onclick="deleteInput({{id}})" type="button">Delete box</button></div>';
-        const element = $.parseHTML(Mustache.render(str, {color: item.color, id: index}));
+        const str = '<div class="entry"><div class="field block" style="background-color: {{color}}"></div><input class="field block input-label" type="text" placeholder="label" value="{{value}}" id="{{id}}"/><button class="field block" onclick="deleteInput({{id}})" type="button">Delete box</button></div>';
+        const element = $.parseHTML(Mustache.render(str, {color: item.color, id: index, value: item.label}));
         inputs.append(element);
-        // const box = item;
-        // ctx.strokeStyle = box.color;
-        // ctx.strokeRect(box.x, box.y, box.w, box.h);
+    });
+
+    $(".input-label").change(function() {
+        labelsArr = [];
+        $(".input-label").each(function() {
+            labelsArr.push($(this).val());
+        });
+
+        for(let i = 0; i < boxArray.length; i++) {
+            boxArray[i].label = labelsArr[i];
+        }
     });
 }
 
@@ -63,16 +71,24 @@ function updateCanvas() {
 window.onload = function() {
     $("#imageUpload").change(updateImage);
     $("#send-button").click(function() {
-        
-        $(".input-label").each(function() {
-            console.log($(this).val());
-        });
+        if(boxArray.length == 0) {
+            alert("Please pick and label some images!");
+        } else {
+            pageData.rects = [];
+            boxArray.forEach(function(item, index) {
+                const rect = {
+                    x: Math.round(item.x),
+                    y: Math.round(item.y),
+                    w: Math.round(item.w),
+                    h: Math.round(item.h),
+                    label: item.label,
+                }
+                pageData.rects.push(rect);
+            });
+        }
 
         if(pageData.image === null) {
             alert("You need to load image and categorize it first!");
-            return;
-        } else if(pageData.rects === null || pageData.rects.length) {
-            alert("Please pick and label some images!");
             return;
         } else {
             $.ajax({
@@ -109,7 +125,7 @@ window.onload = function() {
         mouseContext.isDown = true;
         mouseContext.currentRec = {
             color: getRandomColor(),
-            label: "label",
+            label: "",
             x: cords.x,
             y: cords.y,
             w: 0,
@@ -138,8 +154,6 @@ function updateImage(event) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     imageFile = event.target.files[0];
-    console.log(imageFile)
-
     pageData.imageType = imageFile.type;
 
     const url = URL.createObjectURL(imageFile);
