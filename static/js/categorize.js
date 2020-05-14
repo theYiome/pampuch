@@ -12,6 +12,34 @@ let imgSize = {
 
 let img = null;
 
+const mouseContext = {
+    isDown: false,
+    currentRec: null,
+};
+
+const boxArray = [];
+
+function updateCanvas() {
+    const canvas = document.getElementById('imgCanvas');
+    const ctx = canvas.getContext("2d");
+
+    if(img != null) {
+        ctx.lineWidth = 4;
+        ctx.drawImage(img, 0, 0, imgSize.w, imgSize.h, 0, 0, canvas.width, canvas.height);
+        boxArray.forEach(function(item, index) {
+            const box = item;
+            ctx.strokeStyle = box.color;
+            ctx.strokeRect(box.x, box.y, box.w, box.h);
+        });
+
+        if(mouseContext.currentRec != null) {
+            const box = mouseContext.currentRec;
+            ctx.strokeStyle = box.color;
+            ctx.strokeRect(box.x, box.y, box.w, box.h);
+        }
+    }
+}
+
 window.onload = function() {
     $("#imageUpload").change(updateImage);
     $("#send-button").click(function() {
@@ -41,21 +69,39 @@ window.onload = function() {
             x: evt.pageX - offset.left,
             y: evt.pageY - offset.top,
         };
+        boxArray.push(mouseContext.currentRec);
+        mouseContext.isDown = false;
+        mouseContext.currentRec = null;
         console.log(cords);
+        updateCanvas();
     }).mousedown(function(evt) {
         let offset = $(this).offset();
         let cords = {
             x: evt.pageX - offset.left,
             y: evt.pageY - offset.top,
         };
+        mouseContext.isDown = true;
+        mouseContext.currentRec = {
+            color: "#" + Math.floor(Math.random()*16777215).toString(16),
+            label: "label",
+            x: cords.x,
+            y: cords.y,
+            w: 0,
+            h: 0
+        };
         console.log(cords);
+        updateCanvas();
     }).mousemove(function(evt) {
         let offset = $(this).offset();
         let cords = {
             x: evt.pageX - offset.left,
             y: evt.pageY - offset.top,
         };
-        console.log(cords);
+        if(mouseContext.currentRec != null && mouseContext.isDown) {
+            mouseContext.currentRec.w = cords.x - mouseContext.currentRec.x;
+            mouseContext.currentRec.h = cords.y - mouseContext.currentRec.y;
+            updateCanvas();
+        }
     });
 };
 
@@ -78,9 +124,8 @@ function updateImage(event) {
         imgSize.k = 900 / imgSize.w;
         console.log(imgSize);
         const cnv = $("#imgCanvas");
-        cnv.width(imgSize.w);
-        cnv.height(imgSize.h);
-
+        canvas.width = imgSize.w;
+        canvas.height = imgSize.h;
         ctx.drawImage(img, 0, 0, imgSize.w, imgSize.h, 0, 0, canvas.width, canvas.height);
     };
     img.src = url;
