@@ -6,6 +6,9 @@ import server_utils as utils
 
 app = flask.Flask(__name__, static_url_path="", static_folder="static")
 driver = None
+driver = utils.SQL_driver()
+driver.create_tables()
+
 
 @app.route("/")
 def redirect_to_menu():
@@ -21,18 +24,20 @@ def redirect_to_apidoc():
 def return_image_ids():
     return driver.select_images()
 
+
 @app.route("/api/image/<string:img_id>")
 def return_image(img_id):
-    return driver.select_images(img_id = img_id)
+    return driver.select_images(img_id=img_id)
+
 
 @app.route("/api/images/label/<string:label>")
 def return_images_by_label(label):
-    return driver.select_images(img_label = label)
+    return driver.select_images(img_label=label)
+
 
 @app.route("/api/images/labels")
 def return_labels():
     return driver.select_labels()
-
 
 
 @app.route("/api/save", methods=['POST'])
@@ -78,6 +83,4 @@ def recognize_image():
 
 
 if __name__ == "__main__":
-    driver = utils.SQL_driver()
-    driver.create_tables()
     app.run(debug=True)
