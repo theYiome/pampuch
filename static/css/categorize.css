@@ -53,6 +53,10 @@ input, button {
     z-index: -1;
 }
 
+.field {
+    color: black;
+}
+
 .control-button + label {
     font-size: 1.25em;
     font-weight: 700;

@@ -19,6 +19,26 @@ const mouseContext = {
 
 const boxArray = [];
 
+function renderInputs() {
+    const inputs = $(".inputs");
+    inputs.children().remove();
+    boxArray.forEach(function(item, index) {
+        const str = '<div class="entry"><div class="field block" style="background-color: {{color}}"></div><input class="field block input-label" type="text" placeholder="label" id="{{id}}"/><button class="field block" onclick="deleteInput({{id}})" type="button">Delete box</button></div>';
+        const element = $.parseHTML(Mustache.render(str, {color: item.color, id: index}));
+        inputs.append(element);
+        // const box = item;
+        // ctx.strokeStyle = box.color;
+        // ctx.strokeRect(box.x, box.y, box.w, box.h);
+    });
+}
+
+function deleteInput(id) {
+    console.log(id);
+    boxArray.splice(id, 1);
+    renderInputs();
+    updateCanvas();
+}
+
 function updateCanvas() {
     const canvas = document.getElementById('imgCanvas');
     const ctx = canvas.getContext("2d");
@@ -43,6 +63,11 @@ function updateCanvas() {
 window.onload = function() {
     $("#imageUpload").change(updateImage);
     $("#send-button").click(function() {
+        
+        $(".input-label").each(function() {
+            console.log($(this).val());
+        });
+
         if(pageData.image === null) {
             alert("You need to load image and categorize it first!");
             return;
@@ -74,6 +99,7 @@ window.onload = function() {
         mouseContext.currentRec = null;
         console.log(cords);
         updateCanvas();
+        renderInputs();
     }).mousedown(function(evt) {
         let offset = $(this).offset();
         let cords = {
@@ -82,7 +108,7 @@ window.onload = function() {
         };
         mouseContext.isDown = true;
         mouseContext.currentRec = {
-            color: "#" + Math.floor(Math.random()*16777215).toString(16),
+            color: getRandomColor(),
             label: "label",
             x: cords.x,
             y: cords.y,
