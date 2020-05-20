@@ -32,6 +32,7 @@ def return_image(img_id):
 
 @app.route("/api/images/label/<string:label>")
 def return_images_by_label(label):
+    label = label.lower()
     return driver.select_images(img_label=label)
 
 
@@ -45,20 +46,21 @@ def save_image():
     data = flask.request.json
     bin_image = utils.base64_str_to_bytearray(data["image"])
     image = Image.open(io.BytesIO(bin_image))
-    # with open("data_sent_by_post.png", "wb") as f:
-    #     f.write(bin_image)
+
     for rect in data["rects"]:
         label = rect["label"]
-        left = int(rect["x"])
-        bottom = int(rect["y"]) + int(rect["h"])
-        right = int(rect["x"]) + int(rect["w"])
-        top = int(rect["y"])
-        labeled_image = image.crop((left, top, right, bottom))
-        labeled_image = labeled_image.resize((32, 32))
-        image_bytes = io.BytesIO()
-        labeled_image.save(image_bytes, format='PNG')
-        image_bytes = image_bytes.getvalue()
-        driver.insert_image(image_bytes, label)
+        if label != '':
+            label = label.lower()
+            left = int(rect["x"])
+            bottom = int(rect["y"]) + int(rect["h"])
+            right = int(rect["x"]) + int(rect["w"])
+            top = int(rect["y"])
+            labeled_image = image.crop((left, top, right, bottom))
+            labeled_image = labeled_image.resize((32, 32))
+            image_bytes = io.BytesIO()
+            labeled_image.save(image_bytes, format='PNG')
+            image_bytes = image_bytes.getvalue()
+            driver.insert_image(image_bytes, label)
     return "Save image with its label in database\n" + json.dumps(data, indent=4)
 
 
@@ -82,5 +84,4 @@ def recognize_image():
     return json.dumps(output, indent=4)
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+app.run(debug=True)
