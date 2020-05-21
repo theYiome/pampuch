@@ -10,23 +10,39 @@
 
         <link href="https://fonts.googleapis.com/css2?family=Baloo+Paaji+2&display=swap" rel="stylesheet">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.1.0/mustache.min.js"></script>
         
         <link rel="stylesheet" href="css/universal.css"/>
-        <link rel="stylesheet" href="css/categorize.css"/>
+        <link rel="stylesheet" href="css/categorize-recognize.css"/>
+        <link rel="stylesheet" href="css/recognize.css"/>
+        <script src="js/universal.js"></script>
         <script src="js/base64.js"></script>
-        <script src="js/categorize.js"></script>
+        <script src="js/recognize.js"></script>
     </head>
 
     <body>
         <div class="flex-center">
-            <div class="mainPanel block">
+            <div class="mainPanel block">        
                 <div class="title block">Recognize</div>
-                <canvas width="400" height="300" id="imgCanvas" class="imgCanvas block">HTML5 canvas is required</canvas>
+                <canvas width="900" height="300" id="imgCanvas" class="imgCanvas block">HTML5 canvas is required</canvas>
                 <div class="controls block">
-                    <input type="file" id="imageUpload" accept="image/*">
+                    <div class="buttons block">
+                        <input class="control-button" type="file" id="imageUpload" accept="image/*"/>
+                        <label for="imageUpload" class="block">Choose a file</label>
+                        
+                        <button id="send-button" class="control-button"></button>
+                        <label for="send-button" class="block">Recognize</label>
+
+                        <button id="delete-button" class="control-button"></button>
+                        <label for="delete-button" class="block">Delete box</label>
+                    </div>
+                </div>
+                <div class="controls block">
+                    <div class="buttons block">Guess is:</div>
+                    <div id="guess" class="buttons block"></div>
                 </div>
                 <a href="menu.html"><div class="title block">Back to Menu</div></a>
-            </div>
+            <div>
         </div>
     </body>
 </html>

@@ -68,16 +68,7 @@ def recognize_image():
     bin_image = utils.base64_str_to_bytearray(data["image"])
 
     output = {
-        "guesses": [
-            {
-                "label": "cat",
-                "percentage": 63
-            },
-            {
-                "label": "cucumber",
-                "percentage": 23
-            }
-        ]
+        "label": "cat"
     }
     return json.dumps(output, indent=4)
 

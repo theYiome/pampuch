@@ -1,0 +1,11 @@
+.buttons {
+    display: flex;
+    flex-direction: row;
+    font-size: 26px;
+    text-shadow: black 1px 1px;
+}
+
+.buttons > * {
+    flex: 1;
+    justify-content: center;
+}

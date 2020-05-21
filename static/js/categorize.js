@@ -23,7 +23,15 @@ function renderInputs() {
     const inputs = $(".inputs");
     inputs.children().remove();
     boxArray.forEach(function(item, index) {
-        const str = '<div class="entry"><div class="field block" style="background-color: {{color}}"></div><input class="field block input-label" type="text" placeholder="label" value="{{value}}" id="{{id}}"/><button class="field block" onclick="deleteInput({{id}})" type="button">Delete box</button></div>';
+        const str = `
+            <div class="entry">
+                <div class="field block" style="background-color: {{color}}"></div>
+                <div class="input-box">
+                    <input class="field block input-label" type="text" placeholder="label" value="{{value}}" id="{{id}}"/>
+                    <button class="field block" onclick="deleteInput({{id}})" type="button">Delete box</button>
+                </div>
+            </div>
+        `;
         const element = $.parseHTML(Mustache.render(str, {color: item.color, id: index, value: item.label}));
         inputs.append(element);
     });
@@ -71,37 +79,39 @@ function updateCanvas() {
 window.onload = function() {
     $("#imageUpload").change(updateImage);
     $("#send-button").click(function() {
-        if(boxArray.length == 0) {
-            alert("Please pick and label some images!");
-        } else {
-            pageData.rects = [];
-            boxArray.forEach(function(item, index) {
-                const rect = {
-                    x: Math.round(item.x),
-                    y: Math.round(item.y),
-                    w: Math.round(item.w),
-                    h: Math.round(item.h),
-                    label: item.label,
-                }
-                pageData.rects.push(rect);
-            });
-        }
-
+        
         if(pageData.image === null) {
             alert("You need to load image and categorize it first!");
             return;
-        } else {
-            $.ajax({
-                url: "/api/save",
-                type: "POST",
-                data: JSON.stringify(pageData),
-                contentType: "application/json",
-                dataType: "json",
-                success: function(data) {
-                    console.log(data);
-                }
-            });
         }
+
+        if(boxArray.length == 0) {
+            alert("Please pick and label some images!");
+            return;
+        }
+        
+        pageData.rects = [];
+        boxArray.forEach(function(item, index) {
+            const rect = {
+                x: Math.round(item.x),
+                y: Math.round(item.y),
+                w: Math.round(item.w),
+                h: Math.round(item.h),
+                label: item.label,
+            };
+            pageData.rects.push(rect);
+        });
+        
+        $.ajax({
+            url: "/api/save",
+            type: "POST",
+            data: JSON.stringify(pageData),
+            contentType: "application/json",
+            dataType: "json",
+            success: function(data) {
+                console.log(data);
+            }
+        });
     });
 
     $("#imgCanvas").mouseup(function(evt) {
