@@ -107,9 +107,18 @@ window.onload = function() {
             type: "POST",
             data: JSON.stringify(pageData),
             contentType: "application/json",
-            dataType: "json",
             success: function(data) {
                 console.log(data);
+                boxArray.length = 0;
+                updateCanvas();
+                renderInputs();
+                alert("All labels are saved successfully!")
+            },
+            error: function(xhr, status, error) {
+                const code = parseInt(xhr.status);
+                console.log(code);
+                console.log(status);
+                console.log(error);
             }
         });
     });
