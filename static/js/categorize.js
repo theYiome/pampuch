@@ -92,6 +92,16 @@ window.onload = function() {
         
         pageData.rects = [];
         boxArray.forEach(function(item, index) {
+            if(item.w < 0) {
+                item.x = item.x + item.w;
+                item.w = -item.w;
+            }
+
+            if(item.h < 0) {
+                item.y = item.y + item.h;
+                item.h = -item.h;
+            }
+
             const rect = {
                 x: Math.round(item.x),
                 y: Math.round(item.y),

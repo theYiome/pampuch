@@ -27,6 +27,7 @@ function updateCanvas() {
             ctx.strokeRect(box.x, box.y, box.w, box.h);
         }
     }
+    console.log(pageData.box);
 }
 
 window.onload = function() {
@@ -71,6 +72,17 @@ window.onload = function() {
         isMouseDown = false;
         const box = pageData.box;
         if(box != null) {
+            const item = box;
+            if(item.w < 0) {
+                item.x = item.x + item.w;
+                item.w = -item.w;
+            }
+
+            if(item.h < 0) {
+                item.y = item.y + item.h;
+                item.h = -item.h;
+            }
+
             box.x = Math.round(box.x);
             box.y = Math.round(box.y);
             box.h = Math.round(box.h);
