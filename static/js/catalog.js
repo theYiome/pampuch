@@ -1,7 +1,7 @@
 const images = {};
 const sectionTemplate = `
 <div id="section-{{label}}" class="section block">
-    <div class="label block">{{label}}</div>
+    <div class="label block" style="background-color: {{color}}">{{label}}</div>
     {{{imagesDiv}}}
 </div>
 `;
@@ -37,7 +37,8 @@ function updateImages() {
                     const imagesDiv = Mustache.render(imagesTemplate, {id: label});
                     const sectionDiv = Mustache.render(sectionTemplate, {
                         imagesDiv: imagesDiv,
-                        label: value.label
+                        label: label,
+                        color: stringToColor(label)
                     });
                     console.log(sectionDiv);
                     const sectionObj = $.parseHTML(sectionDiv);

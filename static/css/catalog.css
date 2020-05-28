@@ -13,9 +13,10 @@
 }
 
 .label {
-    background-color: var(--primary-dark);
     color: white;
-    justify-content: center;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    text-align: center;
+    font-size: 22px;
 }
 
 .img {
