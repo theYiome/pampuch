@@ -41,6 +41,11 @@ def return_labels():
     return driver.select_labels()
 
 
+@app.route("/api/images/delete/<string:img_id>")
+def delete_image_by_id(img_id):
+    return driver.delete_image(img_id=img_id)
+
+
 @app.route("/api/save", methods=['POST'])
 def save_image():
     data = flask.request.json
