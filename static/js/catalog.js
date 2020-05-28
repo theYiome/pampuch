@@ -14,7 +14,7 @@ const imagesTemplate = `
 const imgTemplate = `
 <div class="entry block">
     <img class="img" src="data:image/png;base64, {{base64}}" width="93" height="93"/>
-    <button class="delete-button block" value="{{id}}">Usuń</button>
+    <button class="delete-button block" value="{{id}}">Delete</button>
 </div>
 `;
 
@@ -53,11 +53,11 @@ function updateImages() {
                 const id = $(this).val();
 
                 $.ajax({
-                    url: "/api/delete/" + id,
-                    type: "POST",
+                    url: "/api/images/delete/" + id,
+                    type: "GET",
                     dataType: "text",
                     success: function (data) {
-                        alert(data);
+                        // alert(data);
                         updateImages();
                     },
                     error: function (xhr, status, error) {

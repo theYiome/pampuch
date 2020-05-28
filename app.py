@@ -68,12 +68,6 @@ def save_image():
             driver.insert_image(image_bytes, label)
     return "Save image with its label in database\n" + json.dumps(data, indent=4)
 
-
-@app.route("/api/delete/<string:img_id>", methods=['POST'])
-def delete_image(img_id):
-    return "Image deleted"
-
-
 @app.route("/api/recognize", methods=['POST'])
 def recognize_image():
     data = flask.request.json
