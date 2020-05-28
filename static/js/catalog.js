@@ -1,8 +1,19 @@
 const images = {};
+const sectionTemplate = `
+<div id="section-{{label}}" class="section block">
+    <div class="label block">{{label}}</div>
+    {{{imagesDiv}}}
+</div>
+`;
+
+const imagesTemplate = `
+<div id="images-{{id}}" class="images">
+</div>
+`;
+
 const imgTemplate = `
 <div class="entry block">
-    <div class="label block">{{label}}</div>
-    <div class="img block"><img src="data:image/png;base64, {{base64}}" alt="{{label}} width="80" height="80""/></div>
+    <img class="img" src="data:image/png;base64, {{base64}}" width="93" height="93"/>
     <button class="delete-button block" value="{{id}}">Usuń</button>
 </div>
 `;
@@ -13,13 +24,28 @@ function updateImages() {
         type: "GET",
         dataType: "json",
         success: function (data) {
-
-            const doom = $("#images");
+            
+            const doom = $("#content");
             doom.children().remove();
 
-            for (const x of data) {
-                const element = $.parseHTML(Mustache.render(imgTemplate, x));
-                doom.append(element);
+            for (const value of data) {
+
+                const label = value.label;
+                const imagesid = "#images-" + label;
+                if($(imagesid).length === 0){
+                    const sectionid = "#section-" + label;
+                    const imagesDiv = Mustache.render(imagesTemplate, {id: label});
+                    const sectionDiv = Mustache.render(sectionTemplate, {
+                        imagesDiv: imagesDiv,
+                        label: value.label
+                    });
+                    console.log(sectionDiv);
+                    const sectionObj = $.parseHTML(sectionDiv);
+                    doom.append(sectionObj);
+                }
+
+                const obj = $.parseHTML(Mustache.render(imgTemplate, value));
+                $(imagesid).append(obj);
             }
 
             // delete action
