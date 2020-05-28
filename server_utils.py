@@ -81,6 +81,21 @@ class SQL_driver:
             objects_list.append(element)
         return json.dumps(objects_list, indent=4)
 
+    def delete_image(self, img_id):
+        objects_list = []
+        element = collections.OrderedDict()
+        exists = self.images.select().where(self.images.columns.id == img_id).scalar()
+        if exists is not None:
+            d = self.images.delete().where(self.images.columns.id == img_id)
+            d.execute()
+            element['id'] = img_id
+            element['status'] = 'deleted'
+        else:
+            element['id'] = img_id
+            element['status'] = 'id_not_found'
+        objects_list.append(element)
+        return json.dumps(objects_list, indent=4)
+
 
 class Images(Base):
     __tablename__ = 'images'
