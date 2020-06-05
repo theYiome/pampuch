@@ -3,12 +3,13 @@ import json
 from PIL import Image
 import io
 import server_utils as utils
+from ml_utils import MlModel
 
 app = flask.Flask(__name__, static_url_path="", static_folder="static")
 driver = None
 driver = utils.SQL_driver()
 driver.create_tables()
-
+ml = MlModel()
 
 @app.route("/")
 def redirect_to_menu():
@@ -77,6 +78,10 @@ def recognize_image():
         "label": "cat"
     }
     return json.dumps(output, indent=4)
+
+@app.route('/api/yolo')
+def get_yolo():
+    return ml.get_yolo_prediction("12")
 
 
 app.run(debug=True)
