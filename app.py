@@ -73,10 +73,11 @@ def save_image():
 def recognize_image():
     data = flask.request.json
     bin_image = utils.base64_str_to_bytearray(data["image"])
-
+    label = ml.categorize_object(bin_image)
     output = {
-        "label": "cat"
+        "label": label
     }
+    print(output)
     return json.dumps(output, indent=4)
 
 @app.route('/api/yolo')
