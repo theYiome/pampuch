@@ -11,6 +11,22 @@ class MlModel:
     def __init__(self):
         self.yolo = load_model('ml/model.h5')
         self.yolo._make_predict_function()
+        self.yolo_categorization = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck",
+                                    "boat", "traffic light", "fire hydrant", "stop sign", "parking meter", "bench",
+                                    "bird", "cat", "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra",
+                                    "giraffe",
+                                    "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee", "skis",
+                                    "snowboard",
+                                    "sports ball", "kite", "baseball bat", "baseball glove", "skateboard", "surfboard",
+                                    "tennis racket", "bottle", "wine glass", "cup", "fork", "knife", "spoon", "bowl",
+                                    "banana",
+                                    "apple", "sandwich", "orange", "broccoli", "carrot", "hot dog", "pizza", "donut",
+                                    "cake",
+                                    "chair", "sofa", "pottedplant", "bed", "diningtable", "toilet", "tvmonitor",
+                                    "laptop", "mouse",
+                                    "remote", "keyboard", "cell phone", "microwave", "oven", "toaster", "sink",
+                                    "refrigerator",
+                                    "book", "clock", "vase", "scissors", "teddy bear", "hair drier", "toothbrush"]
         self.categorization = load_model('ml/object_categorization_model.h5', compile=False)
         self.categorization._make_predict_function()
         self.categorization_classification = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse',
@@ -41,5 +57,6 @@ class MlModel:
                     list_index[i] = list_index[j]
                     list_index[j] = temp
         for i in range(5):
-            print(self.categorization_classification[list_index[i]], ':', round(predictions[0][list_index[i]] * 100, 2), '%')
+            print(self.categorization_classification[list_index[i]], ':', round(predictions[0][list_index[i]] * 100, 2),
+                  '%')
         return self.categorization_classification[list_index[0]]
