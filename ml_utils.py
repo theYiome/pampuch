@@ -3,6 +3,8 @@ import tensorflow
 from keras.models import load_model
 from keras.preprocessing.image import load_img
 from keras.preprocessing.image import img_to_array
+from PIL import Image
+from io import BytesIO
 import matplotlib.pyplot as plt
 
 
@@ -42,10 +44,15 @@ class MlModel:
         yhat = self.yolo.predict(image)
         return str(yhat)
 
-    def categorize_object(self, image):
-        image = plt.imread("shih-tzu.jpg")
+    def categorize_object(self, bytes_image):
+        # image = plt.imread("frog.jpg")
+
+        image = Image.open(bytes_image)
+        image = numpy.array(image)
+
         from skimage.transform import resize
         image = resize(image, (32, 32, 3))
+
         predictions = self.categorization.predict(numpy.array([image]))
         print(predictions)
         list_index = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]

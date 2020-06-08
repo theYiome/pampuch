@@ -5,7 +5,7 @@ import io
 from PIL import Image
 import sqlalchemy
 from sqlalchemy import create_engine, func
-from sqlalchemy import Table, Column, Integer, String, LargeBinary, MetaData
+from sqlalchemy import Table, Column, Integer, String, LargeBinary, MetaData, ARRAY
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -23,14 +23,22 @@ class SQL_driver:
     engine = create_engine('sqlite:///db/pampuch.db')
     metadata = MetaData(engine)
     images = None
+    yolo_images = None
 
     def create_tables(self):
         self.images = Table('images', self.metadata,
                             Column('id', Integer, primary_key=True),
                             Column('label', String),
                             Column('img', LargeBinary))
+        self.yolo_images = Table('yolo_images', self.metadata,
+                            Column('id', Integer, primary_key=True),
+                            Column('label', String),
+                            Column('img_r', ARRAY(Integer)),
+                            Column('img_g', ARRAY(Integer)),
+                            Column('img_b', ARRAY(Integer)))
         try:
             self.images.create()
+            self.yolo_images.create()
         except sqlalchemy.exc.OperationalError as e:
             pass
 
@@ -107,3 +115,18 @@ class Images(Base):
         self.id = id
         self.label = label
         self.img = img
+
+class YOLO_Images(Base):
+    __tablename__ = 'yolo_images'
+    id = Column(Integer, primary_key=True)
+    label = Column(String)
+    img_r = Column(ARRAY(Integer))
+    img_g = Column(ARRAY(Integer))
+    img_b = Column(ARRAY(Integer))
+
+    def __init__(self, id, label, img_r, img_g, img_b):
+        self.id = id
+        self.label = label
+        self.img_r = img_r
+        self.img_g = img_g
+        self.img_b = img_b
