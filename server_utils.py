@@ -2,14 +2,33 @@ import base64
 import json
 import collections
 import io
+import sqlite3
 from PIL import Image
 import sqlalchemy
 from sqlalchemy import create_engine, func
-from sqlalchemy import Table, Column, Integer, String, LargeBinary, MetaData, ARRAY
+from sqlalchemy import Table, Column, Integer, String, LargeBinary, MetaData, TEXT, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import numpy
+
+
+def adapt_array(arr):
+    # out = io.BytesIO()
+    # numpy.save(out, arr)
+    # out.seek(0)
+    # return sqlite3.Binary(out.read())
+    return arr.tobytes()
+
+
+def convert_array(text):
+    # out = io.BytesIO(text)
+    # out.seek(0)
+    # return numpy.load(out)
+    return numpy.frombuffer(text)
 
 Base = declarative_base()
+sqlite3.register_adapter(numpy.ndarray, adapt_array)
+sqlite3.register_converter("array", convert_array)
 
 
 def base64_str_to_bytearray(data) -> bytearray:
@@ -23,22 +42,21 @@ class SQL_driver:
     engine = create_engine('sqlite:///db/pampuch.db')
     metadata = MetaData(engine)
     images = None
-    yolo_images = None
+    yolo_dataset = None
 
     def create_tables(self):
         self.images = Table('images', self.metadata,
                             Column('id', Integer, primary_key=True),
                             Column('label', String),
                             Column('img', LargeBinary))
-        self.yolo_images = Table('yolo_images', self.metadata,
+        self.yolo_dataset = Table('yolo_dataset', self.metadata,
                             Column('id', Integer, primary_key=True),
                             Column('label', String),
-                            Column('img_r', ARRAY(Integer)),
-                            Column('img_g', ARRAY(Integer)),
-                            Column('img_b', ARRAY(Integer)))
+                            Column('img', LargeBinary),
+                            Column('accurancy', Float))
         try:
             self.images.create()
-            self.yolo_images.create()
+            self.yolo_dataset.create()
         except sqlalchemy.exc.OperationalError as e:
             pass
 
@@ -105,6 +123,30 @@ class SQL_driver:
         return json.dumps(objects_list, indent=4)
 
 
+
+    def insert_dataset(self, img, label, accurancy):
+        insert = self.yolo_dataset.insert()
+        insert.execute(img=img, label=label, accurancy=accurancy)
+
+    def select_dataset(self):
+        select = self.yolo_dataset.select()
+        results = select.execute()
+        results = results.fetchall()
+        objects_list = []
+        for row in results:
+            element = collections.OrderedDict()
+            element['id'] = row['id']
+            element['label'] = row['label']
+
+            buffered = io.BytesIO(row['img'])
+            img = Image.open(buffered)
+            img.save(buffered, format="PNG")
+            element['base64'] = "".join(chr(x) for x in bytearray(
+                base64.b64encode(buffered.getvalue())))
+            element['accurancy'] = row['accurancy']
+            objects_list.append(element)
+        return json.dumps(objects_list, indent=4)
+
 class Images(Base):
     __tablename__ = 'images'
     id = Column(Integer, primary_key=True)
@@ -116,17 +158,15 @@ class Images(Base):
         self.label = label
         self.img = img
 
-class YOLO_Images(Base):
-    __tablename__ = 'yolo_images'
+class YOLO_dataset(Base):
+    __tablename__ = 'yolo_dataset'
     id = Column(Integer, primary_key=True)
     label = Column(String)
-    img_r = Column(ARRAY(Integer))
-    img_g = Column(ARRAY(Integer))
-    img_b = Column(ARRAY(Integer))
+    img = Column(LargeBinary)
+    accurancy = Column(Float)
 
-    def __init__(self, id, label, img_r, img_g, img_b):
+    def __init__(self, id, label, img, accurancy):
         self.id = id
         self.label = label
-        self.img_r = img_r
-        self.img_g = img_g
-        self.img_b = img_b
+        self.img = img
+        self.accurancy = accurancy
