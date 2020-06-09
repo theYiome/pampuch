@@ -115,7 +115,7 @@ def get_yolo():
     image /= 255.0
 
     image = numpy.expand_dims(image, 0)
-    class_threshold = 0.9
+    class_threshold = 0.6
     yhat = ml.yolo.predict(image)
     # print([a.shape for a in yhat])
 
