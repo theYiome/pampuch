@@ -7,6 +7,8 @@ __pycache__/
 *.so
 
 .vscode/
+ml/model.h5
+ml/yolov3.weights
 
 # Distribution / packaging
 .Python

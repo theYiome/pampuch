@@ -1,0 +1,41 @@
+<!doctype html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+
+        <title>Yolo</title>
+        <meta name="description" content="Yolo">
+        <meta name="author" content="None">
+
+        <link href="https://fonts.googleapis.com/css2?family=Baloo+Paaji+2&display=swap" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.1.0/mustache.min.js"></script>
+        
+        <link rel="stylesheet" href="css/universal.css"/>
+        <link rel="stylesheet" href="css/categorize-recognize.css"/>
+        <link rel="stylesheet" href="css/recognize.css"/>
+        <script src="js/universal.js"></script>
+        <script src="js/base64.js"></script>
+        <script src="js/yolo.js"></script>
+    </head>
+
+    <body>
+        <div class="flex-center">
+            <div class="mainPanel block">        
+                <div class="title block">Yolo</div>
+                <canvas width="900" height="300" id="imgCanvas" class="imgCanvas block">HTML5 canvas is required</canvas>
+                <div class="controls block">
+                    <div class="buttons block">
+                        <input class="control-button" type="file" id="imageUpload" accept="image/*"/>
+                        <label for="imageUpload" class="block">Choose a file</label>
+                        
+                        <button id="send-button" class="control-button"></button>
+                        <label for="send-button" class="block">Send to Yolo</label>
+                    </div>
+                </div>
+                <a href="menu.html"><div class="title block">Back to Menu</div></a>
+            <div>
+        </div>
+    </body>
+</html>
