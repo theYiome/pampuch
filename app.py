@@ -3,6 +3,7 @@ import json
 from PIL import Image
 from io import BytesIO
 import numpy
+import collections
 from keras.preprocessing.image import img_to_array
 from keras.preprocessing.image import load_img
 
@@ -14,7 +15,7 @@ driver = utils.SQL_driver()
 driver.create_tables()
 
 
-from ml_utils import MlModel, BoundBox
+from ml_utils import MlModel
 ml = MlModel()
 
 
@@ -101,35 +102,35 @@ def recognize_image():
 
 @app.route('/api/yolo')#, methods=['POST'])
 def get_yolo():
+    # return ml.get_yolo_prediction("ss")
     # data = flask.request.json
     # bytearray_image = utils.base64_str_to_bytearray(data["image"])
     # image = Image.open(BytesIO(bytearray_image))
     # image = image.resize((416, 416))
 
-    input_image = load_img("zebra.jpg", (416, 416))
+    input_image = Image.open(open("zebra.jpg", 'rb'))
+    image_w, image_h = input_image.size
+    input_image = input_image.resize((416, 416))
     image = img_to_array(input_image)
     image = image.astype('float32')
     image /= 255.0
     # add a dimension so that we have one sample
     image = numpy.expand_dims(image, 0)
-
+    class_threshold = 0.6
     yhat = ml.yolo.predict(image)
     print([a.shape for a in yhat])
-    # for thing in yhat:
-    #     driver.insert_dataset(thing)
+
     anchors = [[116, 90, 156, 198, 373, 326], [30, 61, 62, 45, 59, 119], [10, 13, 16, 30, 33, 23]]
     boxes = list()
     for i in range(len(yhat)):
-        # decode the output of the network
-        boxes += ml.decode_netout(yhat[i][0], anchors[i], 0.6, 416, 416)
-    v_boxes, v_labels, v_scores = ml.get_boxes(boxes, 0.6)
-    # summarize what we found
+        boxes += ml.decode_netout(yhat[i][0], anchors[i], class_threshold, 416, 416)
+    v_boxes, v_labels, v_scores = ml.get_boxes(boxes, class_threshold)
+
+    objects_list = []
     for i in range(len(v_boxes)):
         print(v_labels[i], v_scores[i], v_boxes[i])
         box = v_boxes[i]
-        # get coordinates
-        y1, x1, y2, x2 = box.ymin*416, box.xmin*416, box.ymax*416, box.xmax*416
-        # calculate width and height of the box
+        y1, x1, y2, x2 = int(box.ymin*416), int(box.xmin*416), int(box.ymax*416), int(box.xmax*416)
         label = v_labels[i]
         accurancy = v_scores[i]
         if x1 < 0:
@@ -149,19 +150,28 @@ def get_yolo():
             x2 = 416
         if y2 > 416:
             y2 = 416
+
         image = input_image.crop((x1, y1, x2, y2))
         image = image.resize((32, 32))
         image_bytes = BytesIO()
         image.save(image_bytes, format='PNG')
         image_bytes = image_bytes.getvalue()
         driver.insert_dataset(image_bytes, label, accurancy)
-    # print(v_boxes)
-    return str(yhat)
-    # return ml.get_yolo_prediction(image)
+
+        element = collections.OrderedDict()
+        element['label'] = label
+        element['accurancy'] = accurancy
+        element['left'] = x1
+        element['right'] = x2
+        element['top'] = y1
+        element['bottom'] = y2
+        objects_list.append(element)
+
+    return json.dumps(objects_list, indent=4)
+
 
 @app.route('/api/yolo/get')
 def get_yolo_dataset():
-
     return driver.select_dataset()
 
 

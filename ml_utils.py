@@ -78,17 +78,13 @@ class MlModel:
         return boxes
 
     def get_yolo_prediction(self, image):
-        # image = load_img("zebra.jpg", (416, 416))
+        image = load_img("cat.jpg", (416, 416))
         image = img_to_array(image)
         image = image.astype('float32')
         image /= 255.0
-        # add a dimension so that we have one sample
+        # add a dimension so that we have one sample	        # add a dimension so that we have one sample
         image = numpy.expand_dims(image, 0)
         yhat = self.yolo.predict(image)
-        driver = utils.SQL_driver()
-        driver.create_tables()
-        for thing in yhat:
-            driver.insert_dataset(thing)
         return str(yhat)
 
     def categorize_object(self, bytes_image):
@@ -129,7 +125,7 @@ class BoundBox:
 
     def get_label(self):
         if self.label == -1:
-            self.label = np.argmax(self.classes)
+            self.label = numpy.argmax(self.classes)
 
         return self.label
 
@@ -138,3 +134,4 @@ class BoundBox:
             self.score = self.classes[self.get_label()]
 
         return self.score
+
