@@ -33,7 +33,7 @@ def return_image_ids():
     return driver.select_images()
 
 
-@app.route("/api/image/<string:img_id>")
+@app.route("/api/image/<int:img_id>")
 def return_image(img_id):
     return driver.select_images(img_id=img_id)
 
@@ -49,7 +49,7 @@ def return_labels():
     return driver.select_labels()
 
 
-@app.route("/api/images/delete/<string:img_id>")
+@app.route("/api/images/delete/<int:img_id>")
 def delete_image_by_id(img_id):
     return driver.delete_image(img_id=img_id)
 
@@ -99,15 +99,14 @@ def recognize_image():
     print(output)
     return json.dumps(output, indent=4)
 
-@app.route('/api/yolo')#, methods=['POST'])
+@app.route('/api/yolo', methods=['POST'])
 def get_yolo():
     # return ml.get_yolo_prediction("ss")
-    # data = flask.request.json
-    # bytearray_image = utils.base64_str_to_bytearray(data["image"])
-    # image = Image.open(BytesIO(bytearray_image))
-    # image = image.resize((416, 416))
+    data = flask.request.json
+    bytearray_image = utils.base64_str_to_bytearray(data["image"])
+    input_image = Image.open(BytesIO(bytearray_image))
 
-    input_image = Image.open(open("cat.jpg", 'rb'))
+    # input_image = Image.open(open("frog_big.jpg", 'rb'))
     image_w, image_h = input_image.size
     input_image = input_image.resize((416, 416))
     image = img_to_array(input_image)
@@ -132,7 +131,7 @@ def get_yolo():
     for i in range(len(v_boxes)):
         print(v_labels[i], v_scores[i], v_boxes[i])
         box = v_boxes[i]
-        label = v_labels[i]
+        label = v_labels[i].lower()
         accurancy = v_scores[i]
 
         image = input_image.crop((box.xmin, box.ymin, box.xmax, box.ymax))
@@ -150,6 +149,7 @@ def get_yolo():
         element['top'] = box.ymin
         element['bottom'] = box.ymax
         objects_list.append(element)
+        # print(element)
 
     return json.dumps(objects_list, indent=4)
 
@@ -158,5 +158,17 @@ def get_yolo():
 def get_yolo_dataset():
     return driver.select_dataset()
 
+@app.route('/api/yolo/get/label/<string:label>')
+def get_yolo_dataset_by_label(label):
+    label = label.lower()
+    return driver.select_dataset(img_label=label)
+
+@app.route('/api/yolo/get/id/<int:img_id>')
+def get_yolo_dataset_by_id(img_id):
+    return driver.select_dataset(img_id=img_id)
+
+@app.route("/api/yolo/get/labels")
+def get_yolo_dataset_labels():
+    return driver.select_dataset_labels()
 
 app.run(debug=True, threaded=False)

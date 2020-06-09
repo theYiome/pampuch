@@ -128,8 +128,18 @@ class SQL_driver:
         insert = self.yolo_dataset.insert()
         insert.execute(img=img, label=label, accurancy=accurancy)
 
-    def select_dataset(self):
-        select = self.yolo_dataset.select()
+    def select_dataset(self, img_id=-1, img_label=''):
+        select = None
+        if img_id == -1 and img_label == '':
+            select = self.yolo_dataset.select()
+        elif img_label == '':
+            select = self.yolo_dataset.select().where(self.yolo_dataset.columns.id == img_id)
+        elif img_id == -1:
+            select = self.yolo_dataset.select().where(self.yolo_dataset.columns.label == img_label)
+
+        if select is None:
+            return
+
         results = select.execute()
         results = results.fetchall()
         objects_list = []
@@ -144,6 +154,20 @@ class SQL_driver:
             element['base64'] = "".join(chr(x) for x in bytearray(
                 base64.b64encode(buffered.getvalue())))
             element['accurancy'] = row['accurancy']
+            objects_list.append(element)
+        return json.dumps(objects_list, indent=4)
+
+    def select_dataset_labels(self):
+        Session = sessionmaker(bind=self.engine)
+        session = Session()
+        results = session.query(YOLO_dataset.label, func.count(
+            YOLO_dataset.id)).group_by(YOLO_dataset.label).all()
+
+        objects_list = []
+        for row in results:
+            element = collections.OrderedDict()
+            element['label'] = row[0]
+            element['count'] = row[1]
             objects_list.append(element)
         return json.dumps(objects_list, indent=4)
 
