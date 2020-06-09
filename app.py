@@ -6,7 +6,7 @@ import numpy
 import collections
 from keras.preprocessing.image import img_to_array
 from keras.preprocessing.image import load_img
-
+from ml_utils import MlModel, correct_yolo_boxes, do_nms
 import server_utils as utils
 
 app = flask.Flask(__name__, static_url_path="", static_folder="static")
@@ -15,7 +15,6 @@ driver = utils.SQL_driver()
 driver.create_tables()
 
 
-from ml_utils import MlModel
 ml = MlModel()
 
 
@@ -108,50 +107,35 @@ def get_yolo():
     # image = Image.open(BytesIO(bytearray_image))
     # image = image.resize((416, 416))
 
-    input_image = Image.open(open("zebra.jpg", 'rb'))
+    input_image = Image.open(open("cat.jpg", 'rb'))
     image_w, image_h = input_image.size
     input_image = input_image.resize((416, 416))
     image = img_to_array(input_image)
     image = image.astype('float32')
     image /= 255.0
-    # add a dimension so that we have one sample
+
     image = numpy.expand_dims(image, 0)
-    class_threshold = 0.6
+    class_threshold = 0.9
     yhat = ml.yolo.predict(image)
-    print([a.shape for a in yhat])
+    # print([a.shape for a in yhat])
 
     anchors = [[116, 90, 156, 198, 373, 326], [30, 61, 62, 45, 59, 119], [10, 13, 16, 30, 33, 23]]
     boxes = list()
     for i in range(len(yhat)):
         boxes += ml.decode_netout(yhat[i][0], anchors[i], class_threshold, 416, 416)
+
+    correct_yolo_boxes(boxes, image_h, image_w, 416, 416)
+    do_nms(boxes, 0.5)
     v_boxes, v_labels, v_scores = ml.get_boxes(boxes, class_threshold)
 
     objects_list = []
     for i in range(len(v_boxes)):
         print(v_labels[i], v_scores[i], v_boxes[i])
         box = v_boxes[i]
-        y1, x1, y2, x2 = int(box.ymin*416), int(box.xmin*416), int(box.ymax*416), int(box.xmax*416)
         label = v_labels[i]
         accurancy = v_scores[i]
-        if x1 < 0:
-            x1 = 0
-        if y1 < 0:
-            y1 = 0
-        if x2 < 0:
-            x2 = 0
-        if y2 < 0:
-            y2 = 0
 
-        if x1 > 416:
-            x1 = 416
-        if y1 > 416:
-            y1 = 416
-        if x2 > 416:
-            x2 = 416
-        if y2 > 416:
-            y2 = 416
-
-        image = input_image.crop((x1, y1, x2, y2))
+        image = input_image.crop((box.xmin, box.ymin, box.xmax, box.ymax))
         image = image.resize((32, 32))
         image_bytes = BytesIO()
         image.save(image_bytes, format='PNG')
@@ -161,10 +145,10 @@ def get_yolo():
         element = collections.OrderedDict()
         element['label'] = label
         element['accurancy'] = accurancy
-        element['left'] = x1
-        element['right'] = x2
-        element['top'] = y1
-        element['bottom'] = y2
+        element['left'] = box.xmin
+        element['right'] = box.xmax
+        element['top'] = box.ymin
+        element['bottom'] = box.ymax
         objects_list.append(element)
 
     return json.dumps(objects_list, indent=4)
