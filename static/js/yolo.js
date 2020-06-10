@@ -24,7 +24,7 @@ function updateCanvas() {
         ctx.strokeRect(box.x, box.y, box.w, box.h);
         
         function drawStroked(text, x, y) {
-            ctx.font = "24px Verdana";
+            ctx.font = "20px Verdana";
             ctx.strokeStyle = 'black';
             ctx.lineWidth = 8;
             ctx.strokeText(text, x, y);
