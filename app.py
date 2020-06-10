@@ -171,4 +171,8 @@ def get_yolo_dataset_by_id(img_id):
 def get_yolo_dataset_labels():
     return driver.select_dataset_labels()
 
+@app.route("/api/yolo/delete/<int:img_id>")
+def delete_dataset_by_id(img_id):
+    return driver.delete_yolo_image(img_id=img_id)
+
 app.run(debug=True, threaded=False)

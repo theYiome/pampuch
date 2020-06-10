@@ -171,6 +171,21 @@ class SQL_driver:
             objects_list.append(element)
         return json.dumps(objects_list, indent=4)
 
+    def delete_yolo_image(self, img_id):
+        objects_list = []
+        element = collections.OrderedDict()
+        exists = self.yolo_dataset.select().where(self.yolo_dataset.columns.id == img_id).scalar()
+        if exists is not None:
+            d = self.yolo_dataset.delete().where(self.yolo_dataset.columns.id == img_id)
+            d.execute()
+            element['id'] = img_id
+            element['status'] = 'deleted'
+        else:
+            element['id'] = img_id
+            element['status'] = 'id_not_found'
+        objects_list.append(element)
+        return json.dumps(objects_list, indent=4)
+
 class Images(Base):
     __tablename__ = 'images'
     id = Column(Integer, primary_key=True)
