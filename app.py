@@ -49,7 +49,7 @@ def return_labels():
     return driver.select_labels()
 
 
-@app.route("/api/images/delete/<int:img_id>")
+@app.route("/api/images/delete/<int:img_id>", methods=['DELETE'])
 def delete_image_by_id(img_id):
     return driver.delete_image(img_id=img_id)
 
@@ -104,11 +104,11 @@ def get_yolo():
     # return ml.get_yolo_prediction("ss")
     data = flask.request.json
     bytearray_image = utils.base64_str_to_bytearray(data["image"])
-    input_image = Image.open(BytesIO(bytearray_image))
+    base_image = Image.open(BytesIO(bytearray_image))
 
     # input_image = Image.open(open("frog_big.jpg", 'rb'))
-    image_w, image_h = input_image.size
-    input_image = input_image.resize((416, 416))
+    image_w, image_h = base_image.size
+    input_image = base_image.resize((416, 416))
     image = img_to_array(input_image)
     image = image.astype('float32')
     image /= 255.0
@@ -134,7 +134,7 @@ def get_yolo():
         label = v_labels[i].lower()
         accurancy = v_scores[i]
 
-        image = input_image.crop((box.xmin, box.ymin, box.xmax, box.ymax))
+        image = base_image.crop((box.xmin, box.ymin, box.xmax, box.ymax))
         image = image.resize((32, 32))
         image_bytes = BytesIO()
         image.save(image_bytes, format='PNG')
@@ -171,7 +171,7 @@ def get_yolo_dataset_by_id(img_id):
 def get_yolo_dataset_labels():
     return driver.select_dataset_labels()
 
-@app.route("/api/yolo/delete/<int:img_id>")
+@app.route("/api/yolo/delete/<int:img_id>", methods=['DELETE'])
 def delete_dataset_by_id(img_id):
     return driver.delete_yolo_image(img_id=img_id)
 
