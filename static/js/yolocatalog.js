@@ -14,6 +14,7 @@ const imagesTemplate = `
 const imgTemplate = `
 <div class="entry block">
     <img class="img" src="data:image/png;base64, {{base64}}" width="93" height="93"/>
+    <button class="delete-button block" value="{{id}}">Delete</button>
 </div>
 `;
 
@@ -47,6 +48,25 @@ function updateImages() {
                 const obj = $.parseHTML(Mustache.render(imgTemplate, value));
                 $(imagesid).append(obj);
             }
+
+            // delete action
+            $(".delete-button").click(function () {
+                const id = $(this).val();
+
+                $.ajax({
+                    url: "/api/yolo/delete/" + id,
+                    type: "GET",
+                    dataType: "text",
+                    success: function (data) {
+                        // alert(data);
+                        updateImages();
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Image could not be deleted :-(");
+                    }
+                });
+            });
+
         },
         error: function (xhr, status, error) {
             const code = parseInt(xhr.status);
