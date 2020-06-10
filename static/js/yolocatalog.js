@@ -55,7 +55,7 @@ function updateImages() {
 
                 $.ajax({
                     url: "/api/yolo/delete/" + id,
-                    type: "GET",
+                    type: "DELETE",
                     dataType: "text",
                     success: function (data) {
                         // alert(data);
