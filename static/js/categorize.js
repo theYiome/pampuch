@@ -103,10 +103,10 @@ window.onload = function() {
             }
 
             const rect = {
-                x: Math.round(item.x),
-                y: Math.round(item.y),
-                w: Math.round(item.w),
-                h: Math.round(item.h),
+                x: Math.round(item.x / imgSize.k),
+                y: Math.round(item.y / imgSize.k),
+                w: Math.round(item.w / imgSize.k),
+                h: Math.round(item.h / imgSize.k),
                 label: item.label,
             };
             pageData.rects.push(rect);
@@ -190,11 +190,13 @@ function updateImage(event) {
     img.onload = function() {
         imgSize.w = this.width;
         imgSize.h = this.height;
-        imgSize.k = 900 / imgSize.w;
+        imgSize.k = 950 / imgSize.w;
         console.log(imgSize);
         const cnv = $("#imgCanvas");
-        canvas.width = imgSize.w;
-        canvas.height = imgSize.h;
+
+        canvas.width = imgSize.w * imgSize.k;
+        canvas.height = imgSize.h * imgSize.k;
+
         ctx.drawImage(img, 0, 0, imgSize.w, imgSize.h, 0, 0, canvas.width, canvas.height);
     };
     img.src = url;
