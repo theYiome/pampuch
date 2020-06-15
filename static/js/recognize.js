@@ -4,14 +4,6 @@ const pageData = {
     box: null
 };
 
-let imgSize = {
-    k: null,
-    w: null,
-    h: null
-};
-
-let img = null;
-
 let isMouseDown = false;
 
 function updateCanvas() {
@@ -50,6 +42,13 @@ window.onload = function() {
             return;
         }
         
+        pageData.box = {
+            x: Math.round(pageData.box.x / imgSize.k),
+            y: Math.round(pageData.box.y / imgSize.k),
+            w: Math.round(pageData.box.w / imgSize.k),
+            h: Math.round(pageData.box.h / imgSize.k),
+        };
+
         $.ajax({
             url: "/api/recognize",
             type: "POST",
@@ -61,6 +60,8 @@ window.onload = function() {
                 $("#guess").html(data.label);
             }
         });
+        
+        pageData.box = null;
     });
 
     $("#imgCanvas").mouseup(function(evt) {
@@ -120,35 +121,3 @@ window.onload = function() {
         }
     });
 };
-
-function updateImage(event) {
-    const canvas = document.getElementById('imgCanvas');
-    const ctx = canvas.getContext('2d');
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    imageFile = event.target.files[0];
-    pageData.imageType = imageFile.type;
-
-    const url = URL.createObjectURL(imageFile);
-    img = new Image();
-    img.onload = function() {
-        imgSize.w = this.width;
-        imgSize.h = this.height;
-        imgSize.k = 900 / imgSize.w;
-        console.log(imgSize);
-        const cnv = $("#imgCanvas");
-        canvas.width = imgSize.w;
-        canvas.height = imgSize.h;
-        ctx.drawImage(img, 0, 0, imgSize.w, imgSize.h, 0, 0, canvas.width, canvas.height);
-    };
-    img.src = url;
-
-    const fileReader = new FileReader();
-    fileReader.onload = function(e) {
-        const data = new Uint8Array(e.target.result);
-        pageData.image = base64encode(data);
-    };
-    fileReader.readAsArrayBuffer(imageFile);
-}
-
