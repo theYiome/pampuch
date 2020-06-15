@@ -95,7 +95,7 @@ window.onload = function() {
                         y: item.top,
                         w: item.right - item.left,
                         h: item.bottom - item.top,
-                        label: item.label + " " + Math.round(item.accurancy) + "%",
+                        label: item.label + " " + item.accurancy.toFixed(2) + "%",
                         color: getRandomColor()
                     };
                     boxes.push(entry);
