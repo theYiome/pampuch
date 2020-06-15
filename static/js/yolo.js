@@ -3,15 +3,7 @@ const pageData = {
     imageType: null,
 };
 
-let imgSize = {
-    k: null,
-    w: null,
-    h: null
-};
-
 let boxes = [];
-
-let img = null;
 
 function updateCanvas() {
     const canvas = document.getElementById('imgCanvas');
@@ -24,9 +16,9 @@ function updateCanvas() {
         ctx.strokeRect(box.x, box.y, box.w, box.h);
         
         function drawStroked(text, x, y) {
-            ctx.font = "20px Verdana";
+            ctx.font = "18px Verdana";
             ctx.strokeStyle = 'black';
-            ctx.lineWidth = 8;
+            ctx.lineWidth = 5;
             ctx.strokeText(text, x, y);
             ctx.fillStyle = 'white';
             ctx.fillText(text, x, y);
@@ -45,6 +37,7 @@ window.onload = function() {
             return;
         }
 
+        // MOCKED DATA
         // data = [
         //     {
         //         "label": "cat",
@@ -68,16 +61,17 @@ window.onload = function() {
 
         // for(const item of data) {
         //     const entry = {
-        //         x: item.left,
-        //         y: item.top,
-        //         w: item.right - item.left,
-        //         h: item.bottom - item.top,
-        //         label: item.label + " " + item.accurancy + "%",
+        //         x: item.left * imgSize.k,
+        //         y: item.top * imgSize.k,
+        //         w: (item.right - item.left) * imgSize.k,
+        //         h: (item.bottom - item.top) * imgSize.k,
+        //         label: item.label + " " + item.accurancy.toFixed(2) + "%",
         //         color: getRandomColor()
         //     };
         //     boxes.push(entry);
         // }
         // updateCanvas();
+
         $.ajax({
             url: "/api/yolo",
             type: "POST",
@@ -91,10 +85,10 @@ window.onload = function() {
 
                 for(const item of data) {
                     const entry = {
-                        x: item.left,
-                        y: item.top,
-                        w: item.right - item.left,
-                        h: item.bottom - item.top,
+                        x: item.left * imgSize.k,
+                        y: item.top * imgSize.k,
+                        w: (item.right - item.left) * imgSize.k,
+                        h: (item.bottom - item.top) * imgSize.k,
                         label: item.label + " " + item.accurancy.toFixed(2) + "%",
                         color: getRandomColor()
                     };
@@ -105,36 +99,3 @@ window.onload = function() {
         });
     });
 };
-
-function updateImage(event) {
-    const canvas = document.getElementById('imgCanvas');
-    const ctx = canvas.getContext('2d');
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    imageFile = event.target.files[0];
-    pageData.imageType = imageFile.type;
-    boxes = [];
-
-    const url = URL.createObjectURL(imageFile);
-    img = new Image();
-    img.onload = function() {
-        imgSize.w = this.width;
-        imgSize.h = this.height;
-        imgSize.k = 900 / imgSize.w;
-        console.log(imgSize);
-        const cnv = $("#imgCanvas");
-        canvas.width = imgSize.w;
-        canvas.height = imgSize.h;
-        ctx.drawImage(img, 0, 0, imgSize.w, imgSize.h, 0, 0, canvas.width, canvas.height);
-    };
-    img.src = url;
-
-    const fileReader = new FileReader();
-    fileReader.onload = function(e) {
-        const data = new Uint8Array(e.target.result);
-        pageData.image = base64encode(data);
-    };
-    fileReader.readAsArrayBuffer(imageFile);
-}
-
